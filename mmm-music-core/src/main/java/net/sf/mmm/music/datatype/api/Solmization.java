@@ -18,13 +18,13 @@ package net.sf.mmm.music.datatype.api;
  *
  * @author hohwille
  */
-public enum Solmization {
+public enum Solmization implements Interval {
 
   /**
    * The first tone in case of a {@link TonalSystem#MAJOR major} and the third tone in case of a
    * {@link TonalSystem#MINOR minor} {@link MusicalKey#getDiatonicScale() scale}.
    */
-  DO(0, 4),
+  DO(0, 3),
 
   /**
    * The second tone in case of a {@link TonalSystem#MAJOR major} and the fourth tone in case of a
@@ -42,14 +42,14 @@ public enum Solmization {
    * The fourth tone in case of a {@link TonalSystem#MAJOR major} and the sixth tone in case of a
    * {@link TonalSystem#MINOR minor} {@link MusicalKey#getDiatonicScale() scale}.
    */
-  FA(5, 9),
+  FA(5, 8),
 
   /**
    * The fifth tone in case of a {@link TonalSystem#MAJOR major} and the seventh tone in case of a
    * {@link TonalSystem#MINOR minor} {@link MusicalKey#getDiatonicScale() scale}. It may also be called sol instead of
    * so.
    */
-  SO(7, 11),
+  SO(7, 10),
 
   /**
    * The sixth tone in case of a {@link TonalSystem#MAJOR major} and the first tone in case of a
@@ -108,7 +108,41 @@ public enum Solmization {
    */
   public int getMinorDiatonicSteps() {
 
-    return (this.minorChromaticSteps + 1) / 2;
+    int add = 1;
+    if (this.minorChromaticSteps >= 8) {
+      add = 2;
+    }
+    return (this.minorChromaticSteps + add) / 2;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Integer getChromaticSteps(TonalSystem system) {
+
+    if (system == TonalSystem.MAJOR) {
+      return Integer.valueOf(getMajorChromaticSteps());
+    } else if (system == TonalSystem.MINOR) {
+      return Integer.valueOf(getMinorChromaticSteps());
+    } else {
+      return null;
+    }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Integer getDiatonicSteps(TonalSystem system) {
+
+    if (system == TonalSystem.MAJOR) {
+      return Integer.valueOf(getMajorDiatonicSteps());
+    } else if (system == TonalSystem.MINOR) {
+      return Integer.valueOf(getMinorDiatonicSteps());
+    } else {
+      return null;
+    }
   }
 
 }

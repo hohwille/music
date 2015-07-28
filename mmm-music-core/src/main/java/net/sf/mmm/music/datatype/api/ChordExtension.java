@@ -11,52 +11,97 @@ import java.util.Map;
 
 /**
  * A {@link ChordExtension} extends a {@link Chord} with additional {@link ChromaticInterval intervals} or may also
- * {@link #isReplaceChord() replace} existing intervals. These are typically numbers, specific strings or symbols added
+ * {@link #isRemoveThird() replace} existing intervals. These are typically numbers, specific strings or symbols added
  * to a {@link Chord}-{@link Chord#getName() name}.
  *
  * @author hohwille
  */
 public enum ChordExtension {
 
-  _2("2", false, null, null, ChromaticInterval.MAJOR_SECOND),
+  /** Adds a {@link ChromaticInterval#MAJOR_SECOND} to the {@link Chord}. */
+  _2("2", false, false, null, null, ChromaticInterval.MAJOR_SECOND),
 
-  ADD_2("add2", false, null, "+2", ChromaticInterval.MAJOR_SECOND),
+  /** Adds a {@link ChromaticInterval#MAJOR_SECOND} to the {@link Chord}. */
+  ADD_2("add2", false, false, null, "+2", ChromaticInterval.MAJOR_SECOND),
 
-  SUS_2("sus2", true, null, null, ChromaticInterval.MAJOR_SECOND, ChromaticInterval.PERFECT_FIFTH),
+  /**
+   * {@link #isRemoveThird() Replaces the third} (suspended) of the {@link Chord} with a
+   * {@link ChromaticInterval#MAJOR_SECOND}.
+   */
+  SUS_2("sus2", true, false, null, null, ChromaticInterval.MAJOR_SECOND, ChromaticInterval.PERFECT_FIFTH),
 
-  _4("4", true, null, null, ChromaticInterval.PERFECT_FOURTH),
+  /** {@link #isRemoveThird() Removes the third} of the {@link Chord}. */
+  NO_3("no3", true, false, null, null, ChromaticInterval.PERFECT_FIFTH),
 
-  ADD_4("add4", false, null, "+4", ChromaticInterval.PERFECT_FOURTH),
+  /** Adds a {@link ChromaticInterval#PERFECT_FOURTH} to the {@link Chord}. */
+  _4("4", true, false, null, null, ChromaticInterval.PERFECT_FOURTH),
 
-  SUS_4("sus4", true, null, null, ChromaticInterval.PERFECT_FOURTH, ChromaticInterval.PERFECT_FIFTH),
+  /** Adds a {@link ChromaticInterval#PERFECT_FOURTH} to the {@link Chord}. */
+  ADD_4("add4", false, false, null, "+4", ChromaticInterval.PERFECT_FOURTH),
 
-  _5("5", true, null, null, ChromaticInterval.PERFECT_FIFTH),
+  /**
+   * {@link #isRemoveThird() Replaces the third} (suspended) of the {@link Chord} with a
+   * {@link ChromaticInterval#PERFECT_FOURTH}.
+   */
+  SUS_4("sus4", true, false, null, null, ChromaticInterval.PERFECT_FOURTH, ChromaticInterval.PERFECT_FIFTH),
 
-  _6("6", false, null, "maj6", ChromaticInterval.MAJOR_SIXT),
+  /** {@link #isRemoveThird() Removes the third} of the {@link Chord}. */
+  _5("5", true, false, null, null),
 
-  _7("7", false, null, "7", ChromaticInterval.MINOR_SEVENTH),
+  /** {@link #isRemoveFifth() Removes the fifth} of the {@link Chord}. */
+  NO_5("no5", false, true, null, null, ChromaticInterval.PERFECT_FIFTH),
 
-  MAJ_7("maj7", false, "Δ", "j7", ChromaticInterval.MINOR_SEVENTH),
+  /** Adds a {@link ChromaticInterval#MAJOR_SIXT} to the {@link Chord}. */
+  _6("6", false, false, null, "maj6", ChromaticInterval.MAJOR_SIXT),
 
-  _9("9", false, null, null, ChromaticInterval.MINOR_SEVENTH, ChromaticInterval.MAJOR_NINTH),
+  /** Adds a {@link ChromaticInterval#MINOR_SEVENTH} to the {@link Chord}. */
+  _7("7", false, false, null, "7", ChromaticInterval.MINOR_SEVENTH),
 
-  ADD_9("add9", false, null, "+9", ChromaticInterval.MAJOR_SECOND),
+  /** Adds a {@link ChromaticInterval#MAJOR_SEVENTH} to the {@link Chord}. */
+  MAJ_7("maj7", false, false, "Δ", "j7", ChromaticInterval.MINOR_SEVENTH),
 
-  MAJ_9("maj9", false, null, "j9", ChromaticInterval.MAJOR_SEVENTH, ChromaticInterval.MAJOR_NINTH),
+  /** Adds a {@link ChromaticInterval#MINOR_SEVENTH} and {@link ChromaticInterval#MAJOR_NINTH} to the {@link Chord}. */
+  _9("9", false, false, null, null, ChromaticInterval.MINOR_SEVENTH, ChromaticInterval.MAJOR_NINTH),
 
-  _11("11", false, null, null, ChromaticInterval.MINOR_SEVENTH, ChromaticInterval.MAJOR_NINTH,
+  /** Adds a {@link ChromaticInterval#MAJOR_NINTH} to the {@link Chord}. */
+  ADD_9("add9", false, false, null, "+9", ChromaticInterval.MAJOR_NINTH),
+
+  /** Adds a {@link ChromaticInterval#MAJOR_SEVENTH} and {@link ChromaticInterval#MAJOR_NINTH} to the {@link Chord}. */
+  MAJ_9("maj9", false, false, null, "j9", ChromaticInterval.MAJOR_SEVENTH, ChromaticInterval.MAJOR_NINTH),
+
+  /**
+   * Adds a {@link ChromaticInterval#MINOR_SEVENTH}, a {@link ChromaticInterval#MAJOR_NINTH}, and a
+   * {@link ChromaticInterval#PERFECT_ELEVENTH} to the {@link Chord}.
+   */
+  _11("11", false, false, null, null, ChromaticInterval.MINOR_SEVENTH, ChromaticInterval.MAJOR_NINTH,
       ChromaticInterval.PERFECT_ELEVENTH),
 
-  ADD_11("add11", false, null, "+11", ChromaticInterval.PERFECT_ELEVENTH),
+  /** Adds a {@link ChromaticInterval#PERFECT_ELEVENTH} to the {@link Chord}. */
+  ADD_11("add11", false, false, null, "+11", ChromaticInterval.PERFECT_ELEVENTH),
 
-  _13("13", false, null, null, ChromaticInterval.MINOR_SEVENTH, ChromaticInterval.MAJOR_NINTH,
+  /**
+   * Adds a {@link ChromaticInterval#MINOR_SEVENTH}, a {@link ChromaticInterval#MAJOR_NINTH}, a
+   * {@link ChromaticInterval#PERFECT_ELEVENTH}, and a {@link ChromaticInterval#MAJOR_THIRTEENTH} to the {@link Chord}.
+   */
+  _13("13", false, false, null, null, ChromaticInterval.MINOR_SEVENTH, ChromaticInterval.MAJOR_NINTH,
       ChromaticInterval.PERFECT_ELEVENTH, ChromaticInterval.MAJOR_THIRTEENTH),
 
-  ADD_13("add13", false, null, null, ChromaticInterval.MAJOR_THIRTEENTH),
+  /** Adds a {@link ChromaticInterval#MAJOR_THIRTEENTH} to the {@link Chord}. */
+  ADD_13("add13", false, false, null, null, ChromaticInterval.MAJOR_THIRTEENTH),
 
-  DIM("dim", true, "°", "0", ChromaticInterval.MINOR_THIRD, ChromaticInterval.DIMINISHED_FIFTH),
+  /**
+   * Diminished extension that {@link #isRemoveThird() removes the third} and {@link #isRemoveFifth() fifth} of the
+   * {@link Chord} and replaces them with a {@link ChromaticInterval#MINOR_THIRD} and a
+   * {@link ChromaticInterval#DIMINISHED_FIFTH}.
+   */
+  DIM("dim", true, true, "°", "0", ChromaticInterval.MINOR_THIRD, ChromaticInterval.DIMINISHED_FIFTH),
 
-  AUG("aug", true, null, "+", ChromaticInterval.MAJOR_THIRD, ChromaticInterval.MINOR_SIXT);
+  /**
+   * Augmented triad is an extension that {@link #isRemoveThird() removes the third} and {@link #isRemoveFifth() fifth}
+   * of the {@link Chord} and replaces them with a {@link ChromaticInterval#MAJOR_THIRD} and a
+   * {@link ChromaticInterval#MAJOR_SIXT}.
+   */
+  AUG("aug", true, false, null, "+", ChromaticInterval.MAJOR_THIRD, ChromaticInterval.MINOR_SIXT);
 
   private static final Map<String, ChordExtension> NAME2EXT_MAP = new HashMap<>();
 
@@ -74,7 +119,9 @@ public enum ChordExtension {
 
   private final String name;
 
-  private final boolean replaceChord;
+  private final boolean removeThird;
+
+  private final boolean removeFifth;
 
   private final String symbol;
 
@@ -82,11 +129,12 @@ public enum ChordExtension {
 
   private final List<ChromaticInterval> intervals;
 
-  private ChordExtension(String name, boolean replaceChord, String symbol, String altName,
+  private ChordExtension(String name, boolean removeThird, boolean removeFifth, String symbol, String altName,
       ChromaticInterval... intervals) {
 
     this.name = name;
-    this.replaceChord = replaceChord;
+    this.removeThird = removeThird;
+    this.removeFifth = removeFifth;
     this.symbol = symbol;
     this.altName = altName;
     this.intervals = Collections.unmodifiableList(Arrays.asList(intervals));
@@ -117,12 +165,26 @@ public enum ChordExtension {
   }
 
   /**
-   * @return {@code true} if the original chord (actually its third and fifth) are replaced with the specified
-   *         {@link #getIntervals() intervals}.
+   * @see #isRemoveFifth()
+   *
+   * @return {@code true} if the {@link DiatonicInterval#THIRD third} is removed from the original {@link Chord}
+   *         (applies to all {@link ChordExtension}s starting with "sus" for suspended but also to others),
+   *         {@code false} otherwise.
    */
-  public boolean isReplaceChord() {
+  public boolean isRemoveThird() {
 
-    return this.replaceChord;
+    return this.removeThird;
+  }
+
+  /**
+   * @see #isRemoveThird()
+   *
+   * @return {@code true} if the {@link DiatonicInterval#FIFTH fifth} is removed from the original {@link Chord},
+   *         {@code false} otherwise.
+   */
+  public boolean isRemoveFifth() {
+
+    return this.removeFifth;
   }
 
   /**

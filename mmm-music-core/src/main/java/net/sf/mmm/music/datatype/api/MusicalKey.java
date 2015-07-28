@@ -355,12 +355,40 @@ public enum MusicalKey {
   }
 
   /**
+   * Returns the tone for the given {@link Interval}.
+   *
+   * @param interval is the {@link Interval} such as e.g. {@link Solmization#MI}, {@link ChromaticInterval#MAJOR_THIRD},
+   *        or {@link DiatonicInterval#THIRD}.
+   * @return the requested {@link TonePitch} of this {@link MusicalKey}.
+   */
+  public TonePitch getTone(Interval interval) {
+
+    Integer chromaticSteps = interval.getChromaticSteps(this.tonalSystem);
+    if (chromaticSteps != null) {
+      int index = chromaticSteps.intValue() % 12;
+      if (index < 0) {
+        index = index + 12;
+      }
+      return this.tonesChromatic.get(index);
+    }
+    Integer diatonicSteps = interval.getDiatonicSteps(this.tonalSystem);
+    if (diatonicSteps != null) {
+      int index = diatonicSteps.intValue() % 8;
+      if (index < 0) {
+        index = index + 8;
+      }
+      return this.tonesDiatonic.get(index);
+    }
+    throw new IllegalArgumentException(interval.toString());
+  }
+
+  /**
    * This method gets the {@link MusicalKey} for the given <code>value</code>.
    *
    * @param value is the {@link #getName() value} of the requested {@link MusicalKey}.
    * @return the requested {@link MusicalKey} or <code>null</code> if no such {@link MusicalKey} exists.
    */
-  public static MusicalKey fromString(String value) {
+  public static MusicalKey fromName(String value) {
 
     for (MusicalKey instance : values()) {
       if (instance.name.equals(value)) {

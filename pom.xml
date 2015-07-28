@@ -16,6 +16,7 @@
   <url>http://m-m-m.sourceforge.net/</url>
 
   <properties>
+    <java.version>1.8</java.version>
     <!-- Internal project versions -->
     <net.sf.mmm.music.version>1.0.0-SNAPSHOT</net.sf.mmm.music.version>
   </properties>

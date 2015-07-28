@@ -76,7 +76,7 @@ public enum TonePitch {
   GESES("G\uD834\uDD2B", "Gbb", "Geses", 5, F),
 
   /** <code>F&#9839;</code> (Fis) is six semitones (half steps) higher than the pitch {@link #C}. */
-  FIS("F#", "F#", "Fis", 6, null),
+  FIS("F\u266F", "F#", "Fis", 6, null),
 
   /** <code>E&#119082;</code> (E##) is the sharpened enharmonic change of {@link #FIS}. */
   EISIS("E\uD834\uDD2A", "E##", "Eisis", 6, FIS),
@@ -94,7 +94,7 @@ public enum TonePitch {
   ASES("A\uD834\uDD2B", "Abb", "Ases", 7, G),
 
   /** <code>G&#9839;</code> (G#) is eight semitones (half steps) higher than the pitch {@link #C}. */
-  GIS("G#", "G#", "Gis", 8, null),
+  GIS("G\u266F", "G#", "Gis", 8, null),
 
   /** <code>A&#9837;</code> (Ab) is the flattened enharmonic change of {@link #GIS}. */
   AS("A\u266D", "Ab", "As", 8, GIS),
@@ -293,6 +293,20 @@ public enum TonePitch {
   }
 
   /**
+   * @param targetTone is the target {@link TonePitch}.
+   * @return the {@link ChromaticInterval} to {@link #transposeChromatic(int, EnharmonicStyle) get} from this
+   *         {@link TonePitch} to the given {@code targetTone}.
+   */
+  public ChromaticInterval getInterval(TonePitch targetTone) {
+
+    int interval = targetTone.step - this.step;
+    if (interval < 0) {
+      interval = interval + 12;
+    }
+    return ChromaticInterval.fromChromaticSteps(interval);
+  }
+
+  /**
    * This method transposes this {@link TonePitch} by the given number of <code>semitoneSteps</code> and returns the
    * {@link #getNormal() normalized} tone. The {@link TonePitch} will wrap so
    * {@link #transposeChromatic(int, EnharmonicStyle) transpose(12)} will return the {@link #getNormal() normalized}
@@ -300,8 +314,8 @@ public enum TonePitch {
    * {@link #transposeChromatic(int, EnharmonicStyle) transpose(-24)}.
    *
    * @param semitoneSteps is the number of semitone steps to transpose. A positive value transposes towards a higher
-   *        pitch, a negative value transposes towards a lower pitch. A value of zero (<code>0</code>) will have no
-   *        change.
+   *        pitch, a negative value transposes towards a lower pitch. A value of zero (<code>0</code>) will cause no
+   *        change of the {@link #getStep() step}.
    * @param style the {@link EnharmonicStyle}.
    * @return the transposed and {@link #isNormal() normalized} {@link TonePitch}.
    */
@@ -344,7 +358,7 @@ public enum TonePitch {
 
   /**
    * This method transposes this {@link TonePitch} by the given number of <code>semitoneSteps</code> wrapping within the
-   * {@link MusicalKey#getChromaticScale() chromatic tones} of the given {@link MusicalKey}.
+   * {@link MusicalKey#getChromaticScale() chromatic scale} of the given {@link MusicalKey}.
    *
    * @see #transposeChromatic(int, EnharmonicStyle)
    *
@@ -361,6 +375,49 @@ public enum TonePitch {
       targetStep = targetStep + 12;
     }
     return targetKey.getChromaticScale().get(targetStep);
+  }
+
+  /**
+   * This method transposes this {@link TonePitch} by the given number of <code>diatonicSteps</code> wrapping within the
+   * {@link MusicalKey#getDiatonicScale() diatonic scale} of the given {@link MusicalKey}.
+   *
+   * @see #transposeChromatic(int, EnharmonicStyle)
+   *
+   * @param diatonicSteps is the number of semitone steps to transpose. A positive value transposes towards a higher
+   *        pitch, a negative value transposes towards a lower pitch. A value of zero (<code>0</code>) will have no
+   *        change.
+   * @param targetKey is the target {@link MusicalKey key}.
+   * @return the transposed {@link TonePitch} with enharmonic change according to the given {@link MusicalKey}.
+   */
+  public TonePitch transposeDiatonic(int diatonicSteps, MusicalKey targetKey) {
+
+    int targetStep = (this.step + diatonicSteps - targetKey.getTonika().getStep()) % 8;
+    if (targetStep < 0) {
+      targetStep = targetStep + 8;
+    }
+    return targetKey.getDiatonicScale().get(targetStep);
+  }
+
+  /**
+   * Transposes this {@link TonePitch} by the given {@link Interval} within the given {@code targetKey}.
+   *
+   * @param interval is the {@link Interval} such as e.g. {@link Solmization#MI}, {@link ChromaticInterval#MAJOR_THIRD},
+   *        or {@link DiatonicInterval#THIRD}.
+   * @param targetKey is the target {@link MusicalKey key}.
+   * @return the resulting {@link TonePitch}.
+   */
+  public TonePitch transpose(Interval interval, MusicalKey targetKey) {
+
+    TonalSystem system = targetKey.getTonalSystem();
+    Integer chromaticSteps = interval.getChromaticSteps(system);
+    if (chromaticSteps != null) {
+      return transposeChromatic(chromaticSteps.intValue(), targetKey);
+    }
+    Integer diatonicSteps = interval.getDiatonicSteps(system);
+    if (diatonicSteps != null) {
+      return transposeDiatonic(diatonicSteps.intValue(), targetKey);
+    }
+    throw new IllegalArgumentException(interval.toString());
   }
 
   /**
