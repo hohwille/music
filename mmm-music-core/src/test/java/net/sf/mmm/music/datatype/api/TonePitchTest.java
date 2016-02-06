@@ -77,10 +77,10 @@ public class TonePitchTest extends Assertions {
     assertThat(TonePitch.fromString("b\u266D")).isSameAs(TonePitch.B_FLAT);
     assertThat(TonePitch.fromString("h")).isSameAs(TonePitch.H);
     assertThat(TonePitch.fromString("b\u266E")).isSameAs(TonePitch.H);
-    assertThat(TonePitch.fromString("f" + MusicSymbols.DOUBLE_FLAT_SIGN_STRING)).isSameAs(TonePitch.FESES);
+    assertThat(TonePitch.fromString("f" + MusicalConstants.DOUBLE_FLAT_SIGN_STRING)).isSameAs(TonePitch.FESES);
     assertThat(TonePitch.fromString("fbb")).isSameAs(TonePitch.FESES);
     assertThat(TonePitch.fromString("fEseS")).isSameAs(TonePitch.FESES);
-    assertThat(TonePitch.fromString("h" + MusicSymbols.DOUBLE_SHARP_SIGN_STRING)).isSameAs(TonePitch.HISIS);
+    assertThat(TonePitch.fromString("h" + MusicalConstants.DOUBLE_SHARP_SIGN_STRING)).isSameAs(TonePitch.HISIS);
     assertThat(TonePitch.fromString("h##")).isSameAs(TonePitch.HISIS);
     assertThat(TonePitch.fromString("hISis")).isSameAs(TonePitch.HISIS);
   }
@@ -89,15 +89,16 @@ public class TonePitchTest extends Assertions {
   @Test
   public void testFromStringAsPrefix() {
 
-    assertThat(TonePitch.fromStringAsPrefix("c")).isSameAs(TonePitch.C);
-    assertThat(TonePitch.fromStringAsPrefix("ce")).isSameAs(TonePitch.C);
-    assertThat(TonePitch.fromStringAsPrefix("ceS")).isSameAs(TonePitch.CES);
-    assertThat(TonePitch.fromStringAsPrefix("cbe")).isSameAs(TonePitch.CES);
-    assertThat(TonePitch.fromStringAsPrefix("c#9")).isSameAs(TonePitch.CIS);
-    assertThat(TonePitch.fromStringAsPrefix("hesesisas")).isSameAs(TonePitch.HESES);
-    assertThat(TonePitch.fromStringAsPrefix("H" + MusicSymbols.DOUBLE_FLAT_SIGN_STRING)).isSameAs(TonePitch.HESES);
-    assertThat(TonePitch.fromStringAsPrefix("Hbb")).isSameAs(TonePitch.HESES);
-    assertThat(TonePitch.fromStringAsPrefix("Hub")).isSameAs(TonePitch.H);
+    assertThat(TonePitch.fromStringAsPrefix("c")).isEqualTo("c");
+    assertThat(TonePitch.fromStringAsPrefix("ce")).isEqualTo("c");
+    assertThat(TonePitch.fromStringAsPrefix("ceS")).isEqualTo("ces");
+    assertThat(TonePitch.fromStringAsPrefix("cbe")).isEqualTo("cb");
+    assertThat(TonePitch.fromStringAsPrefix("c#9")).isEqualTo("c#");
+    assertThat(TonePitch.fromStringAsPrefix("hesesisas")).isEqualTo("heses");
+    assertThat(TonePitch.fromStringAsPrefix("H" + MusicalConstants.DOUBLE_FLAT_SIGN_STRING)).isEqualTo(
+        "h" + MusicalConstants.DOUBLE_FLAT_SIGN_STRING);
+    assertThat(TonePitch.fromStringAsPrefix("Hbb")).isEqualTo("hbb");
+    assertThat(TonePitch.fromStringAsPrefix("Hub")).isEqualTo("h");
   }
 
   /** Test of {@link TonePitch#getTonePrefix(String)}. */
@@ -125,17 +126,17 @@ public class TonePitchTest extends Assertions {
   public void testUnicode() {
 
     Map<String, String> unicode2asciiMap = new HashMap<>();
-    unicode2asciiMap.put(MusicSymbols.SINGLE_SHARP_SIGN_STRING, "#");
-    unicode2asciiMap.put(MusicSymbols.SINGLE_FLAT_SIGN_STRING, "b");
-    unicode2asciiMap.put(MusicSymbols.DOUBLE_SHARP_SIGN_STRING, "##");
-    unicode2asciiMap.put(MusicSymbols.DOUBLE_FLAT_SIGN_STRING, "bb");
+    unicode2asciiMap.put(MusicalConstants.SINGLE_SHARP_SIGN_STRING, "#");
+    unicode2asciiMap.put(MusicalConstants.SINGLE_FLAT_SIGN_STRING, "b");
+    unicode2asciiMap.put(MusicalConstants.DOUBLE_SHARP_SIGN_STRING, "##");
+    unicode2asciiMap.put(MusicalConstants.DOUBLE_FLAT_SIGN_STRING, "bb");
     for (TonePitch pitch : TonePitch.values()) {
       String unicode = pitch.getUnicode();
       String ascii = unicode;
       for (String sign : unicode2asciiMap.keySet()) {
         if (unicode.endsWith(sign)) {
           ascii = unicode.substring(0, unicode.length() - sign.length()) + unicode2asciiMap.get(sign);
-        } else if (unicode.endsWith(MusicSymbols.NEUTRAL_SIGN_STRING)) {
+        } else if (unicode.endsWith(MusicalConstants.NEUTRAL_SIGN_STRING)) {
           assertThat(pitch).isSameAs(TonePitch.H);
           ascii = "H";
         }

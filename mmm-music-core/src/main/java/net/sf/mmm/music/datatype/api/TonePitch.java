@@ -16,7 +16,7 @@ import java.util.Map;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public enum TonePitch {
+public enum TonePitch implements Transposable<TonePitch> {
 
   /**
    * <code>C</code> is the {@link MusicalKey#getTonika() tonika} (base tone) of the common {@link MusicalKey#C_MAJOR}
@@ -205,10 +205,10 @@ public enum TonePitch {
       this.normal = normal;
       assert (step == normal.step);
     }
-    if (unicode.endsWith(MusicSymbols.DOUBLE_FLAT_SIGN_STRING)) {
+    if (unicode.endsWith(MusicalConstants.DOUBLE_FLAT_SIGN_STRING)) {
       assert (ascii.endsWith("bb"));
     }
-    if (unicode.endsWith(MusicSymbols.DOUBLE_SHARP_SIGN_STRING)) {
+    if (unicode.endsWith(MusicalConstants.DOUBLE_SHARP_SIGN_STRING)) {
       assert (ascii.endsWith("##"));
     }
   }
@@ -251,8 +251,8 @@ public enum TonePitch {
    */
   public boolean isSharp() {
 
-    return this.unicode.endsWith(MusicSymbols.SINGLE_SHARP_SIGN_STRING)
-        || this.unicode.endsWith(MusicSymbols.DOUBLE_SHARP_SIGN_STRING);
+    return this.unicode.endsWith(MusicalConstants.SINGLE_SHARP_SIGN_STRING)
+        || this.unicode.endsWith(MusicalConstants.DOUBLE_SHARP_SIGN_STRING);
   }
 
   /**
@@ -261,8 +261,8 @@ public enum TonePitch {
    */
   public boolean isFlat() {
 
-    return this.unicode.endsWith(MusicSymbols.SINGLE_FLAT_SIGN_STRING)
-        || this.unicode.endsWith(MusicSymbols.DOUBLE_FLAT_SIGN_STRING);
+    return this.unicode.endsWith(MusicalConstants.SINGLE_FLAT_SIGN_STRING)
+        || this.unicode.endsWith(MusicalConstants.DOUBLE_FLAT_SIGN_STRING);
   }
 
   /**
@@ -306,19 +306,7 @@ public enum TonePitch {
     return ChromaticInterval.fromChromaticSteps(interval);
   }
 
-  /**
-   * This method transposes this {@link TonePitch} by the given number of <code>semitoneSteps</code> and returns the
-   * {@link #getNormal() normalized} tone. The {@link TonePitch} will wrap so
-   * {@link #transposeChromatic(int, EnharmonicStyle) transpose(12)} will return the {@link #getNormal() normalized}
-   * {@link TonePitch} just like {@link #transposeChromatic(int, EnharmonicStyle) transpose(0)} or e.g.
-   * {@link #transposeChromatic(int, EnharmonicStyle) transpose(-24)}.
-   *
-   * @param semitoneSteps is the number of semitone steps to transpose. A positive value transposes towards a higher
-   *        pitch, a negative value transposes towards a lower pitch. A value of zero (<code>0</code>) will cause no
-   *        change of the {@link #getStep() step}.
-   * @param style the {@link EnharmonicStyle}.
-   * @return the transposed and {@link #isNormal() normalized} {@link TonePitch}.
-   */
+  @Override
   public TonePitch transposeChromatic(int semitoneSteps, EnharmonicStyle style) {
 
     int targetStep = (this.step + semitoneSteps) % 12;
@@ -356,18 +344,7 @@ public enum TonePitch {
     return result.getNormal();
   }
 
-  /**
-   * This method transposes this {@link TonePitch} by the given number of <code>semitoneSteps</code> wrapping within the
-   * {@link MusicalKey#getChromaticScale() chromatic scale} of the given {@link MusicalKey}.
-   *
-   * @see #transposeChromatic(int, EnharmonicStyle)
-   *
-   * @param semitoneSteps is the number of semitone steps to transpose. A positive value transposes towards a higher
-   *        pitch, a negative value transposes towards a lower pitch. A value of zero (<code>0</code>) will have no
-   *        change.
-   * @param targetKey is the target {@link MusicalKey key}.
-   * @return the transposed {@link TonePitch} with enharmonic change according to the given {@link MusicalKey}.
-   */
+  @Override
   public TonePitch transposeChromatic(int semitoneSteps, MusicalKey targetKey) {
 
     int targetStep = (this.step + semitoneSteps - targetKey.getTonika().getStep()) % 12;
@@ -377,18 +354,7 @@ public enum TonePitch {
     return targetKey.getChromaticScale().get(targetStep);
   }
 
-  /**
-   * This method transposes this {@link TonePitch} by the given number of <code>diatonicSteps</code> wrapping within the
-   * {@link MusicalKey#getDiatonicScale() diatonic scale} of the given {@link MusicalKey}.
-   *
-   * @see #transposeChromatic(int, EnharmonicStyle)
-   *
-   * @param diatonicSteps is the number of semitone steps to transpose. A positive value transposes towards a higher
-   *        pitch, a negative value transposes towards a lower pitch. A value of zero (<code>0</code>) will have no
-   *        change.
-   * @param targetKey is the target {@link MusicalKey key}.
-   * @return the transposed {@link TonePitch} with enharmonic change according to the given {@link MusicalKey}.
-   */
+  @Override
   public TonePitch transposeDiatonic(int diatonicSteps, MusicalKey targetKey) {
 
     int targetStep = (this.step + diatonicSteps - targetKey.getTonika().getStep()) % 8;
@@ -398,14 +364,7 @@ public enum TonePitch {
     return targetKey.getDiatonicScale().get(targetStep);
   }
 
-  /**
-   * Transposes this {@link TonePitch} by the given {@link Interval} within the given {@code targetKey}.
-   *
-   * @param interval is the {@link Interval} such as e.g. {@link Solmization#MI}, {@link ChromaticInterval#MAJOR_THIRD},
-   *        or {@link DiatonicInterval#THIRD}.
-   * @param targetKey is the target {@link MusicalKey key}.
-   * @return the resulting {@link TonePitch}.
-   */
+  @Override
   public TonePitch transpose(Interval interval, MusicalKey targetKey) {
 
     TonalSystem system = targetKey.getTonalSystem();
@@ -446,22 +405,21 @@ public enum TonePitch {
    *        {@link #getText() text} representation in any {@link String#toLowerCase() case}.
    * @return the requested {@link TonePitch} or <code>null</code> if no such {@link TonePitch} exists.
    */
-  public static TonePitch fromStringAsPrefix(String string) {
+  public static String fromStringAsPrefix(String string) {
 
-    TonePitch pitch = null;
     if (string != null) {
       String lowerCase = string.toLowerCase(Locale.US);
       int length = lowerCase.length();
       for (int i = 5; i > 0; i--) {
         if (length >= i) {
-          pitch = NAME2PITCH_MAP.get(lowerCase.subSequence(0, i));
-          if (pitch != null) {
-            break;
+          String key = lowerCase.substring(0, i);
+          if (NAME2PITCH_MAP.containsKey(key)) {
+            return key;
           }
         }
       }
     }
-    return pitch;
+    return null;
   }
 
   /**

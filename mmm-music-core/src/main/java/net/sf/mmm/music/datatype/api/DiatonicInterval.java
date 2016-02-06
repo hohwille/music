@@ -3,8 +3,9 @@
 package net.sf.mmm.music.datatype.api;
 
 /**
- * @author hohwille
+ * Enum with the {@link #getDiatonicSteps() diatonic} {@link Interval}s.
  *
+ * @author hohwille
  */
 public enum DiatonicInterval implements Interval {
 

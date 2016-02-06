@@ -3,8 +3,9 @@
 package net.sf.mmm.music.datatype.api;
 
 /**
- * @author hohwille
+ * Enum with the {@link #getChromaticSteps() chromatic} {@link Interval}s.
  *
+ * @author hohwille
  */
 public enum ChromaticInterval implements Interval {
 
@@ -91,9 +92,8 @@ public enum ChromaticInterval implements Interval {
   }
 
   /**
-   * @see #getChromaticSteps(TonalSystem)
-   *
    * @return the number of semitone steps.
+   * @see #getChromaticSteps(TonalSystem)
    */
   public int getChromaticSteps() {
 
@@ -101,9 +101,8 @@ public enum ChromaticInterval implements Interval {
   }
 
   /**
-   * @see #getDiatonicSteps(TonalSystem)
-   *
    * @return the number of diatonic steps.
+   * @see #getDiatonicSteps(TonalSystem)
    */
   public int getDiatonicSteps() {
 
@@ -125,7 +124,7 @@ public enum ChromaticInterval implements Interval {
   /**
    * @param chromaticSteps the number of {@link #getChromaticSteps() chromatic steps}.
    * @return the corresponding {@link ChromaticInterval} or <code>null</code> if no such {@link ChromaticInterval}
-   *         exists (given value is negative or too high).
+   * exists (given value is negative or too high).
    */
   public static ChromaticInterval fromChromaticSteps(int chromaticSteps) {
 

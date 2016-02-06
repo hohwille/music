@@ -3,10 +3,11 @@
 package net.sf.mmm.music.datatype.api;
 
 /**
- * @author hohwille
+ * Collection of musical constants (e.g. Unicode characters and strings for musical symbols).
  *
+ * @author hohwille
  */
-public interface MusicSymbols {
+public interface MusicalConstants {
 
   /** The single flat sign: {@value} . */
   char SINGLE_FLAT_SIGN_CHAR = '\u266D';
