@@ -22,7 +22,7 @@
   </properties>
 
   <modules>
-    <module>mmm-music-core</module>
+    <module>core</module>
   </modules>  
 
   <issueManagement>
